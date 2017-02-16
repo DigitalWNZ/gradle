@@ -1,0 +1,152 @@
+apply plugin: 'java'
+
+sourceSets {
+  main {
+    output.classesDir 'WebContent/WEB-INF/classes'
+	java.srcDirs 'src'
+  }
+}
+
+apply plugin: 'eclipse'
+apply plugin: 'war'
+apply plugin: 'jetty'
+
+
+sourceCompatibility = 1.8
+version = '1.0'
+war {
+    archiveName 'testgradle.war'
+    from('WebContent')
+}
+
+processResources {
+    from('src') {
+        include '**/*'
+    }
+}
+
+eclipse {
+
+  classpath {
+ 
+    //customizing the classes output directory:
+    defaultOutputDir = file('WebContent/WEB-INF/classes')
+
+  }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'javax.servlet:javax.servlet-api:3.1.0',
+            'org.springframework:spring-context-support:4.0.5.RELEASE',
+    		'org.springframework:spring-webmvc:4.0.5.RELEASE',
+    		'org.springframework:spring-orm:4.0.5.RELEASE',
+    		'org.springframework:spring-jdbc:4.0.5.RELEASE',
+    		'org.springframework:spring-tx:4.0.5.RELEASE',
+    		'org.codehaus.jackson:jackson-mapper-asl:1.9.13',
+			'org.codehaus.jackson:jackson-core-asl:1.9.13',
+    		'org.apache.httpcomponents:httpclient:4.3.4',
+    		'org.json:json:20140107',
+    		'org.tuckey:urlrewritefilter:4.0.4',
+    		'org.apache.commons:commons-dbcp2:2.1'   		
+}
+
+def workdir = "/root/.jenkins/workspace/ForJenkin/testgradle/build"
+task buildDockerImage(type:Exec) {
+    workingDir workdir + '/libs'
+	commandLine '/usr/bin/jar', 'xf', 'testgrale.war'
+
+	doLast { exec {
+    	workingDir workdir + '/libs'
+    	commandLine 'rm', '-f', 'testgrale.war'
+		} // exec
+	} // doLast	
+
+	doLast { exec {
+    	workingDir workdir
+    	commandLine 'docker', 'build', '-t=testgradle:'+imageTimestamp, '-f', './libs/WEB-INF/classes/Dockerfile' , '.'
+		} // exec
+	} // doLast	
+
+} 
+
+def tomcatHome = "/opt/testgradle"
+def projectName = "testgradle"
+
+
+task delFile(type:Delete){
+     delete tomcatHome+'/webapps/'+projectName+'.war'
+     delete tomcatHome+'/webapps/'+projectName
+}
+
+task startTomcat(type:Exec) {
+    workingDir tomcatHome+'/bin'
+    commandLine './startup.sh'
+}
+
+task stopTomcat(type:Exec) {
+   workingDir tomcatHome+'/bin'
+   commandLine './shutdown.sh'
+}
+
+task deployToTomcat(type: Copy,dependsOn: [delFile]) {
+    from "${buildDir}/libs"
+    into tomcatHome+'/webapps'
+
+   doLast{exec{
+    commandLine tomcatHome+'/bin/startup.sh'
+    }
+  } 
+}
+
+
+task PRDdeployToTomcat(type: Copy,dependsOn: [delFile]) {
+    from "${buildDir}/libs"
+    into tomcatHome+'/webapps/testgradle'
+        doFirst{exec{
+        workingDir tomcatHome+'/webapps'
+        commandLine 'mkdir','testgradle'
+        }}
+   doLast{exec{
+ workingDir tomcatHome+'/webapps/testgradle'
+ commandLine '/usr/bin/jar', 'xf',tomcatHome+'/webapps/testgradle/testgradle.war'
+    }
+  }
+}
+
+
+task PRDcopyCSCconf(type:Exec){
+doFirst{exec{
+workingDir tomcatHome+'/webapps/testgradle/WEB-INF/classes/'
+}
+}
+    workingDir tomcatHome+'/bin'
+    commandLine './startup.sh'
+}
+
+task UATdeployToTomcat(type: Copy,dependsOn: [delFile]) {
+    from "${buildDir}/libs"
+    into tomcatHome+'/webapps/testgradle'
+        doFirst{exec{
+        workingDir tomcatHome+'/webapps'
+        commandLine 'mkdir','testgradle'
+        }}
+   doLast{exec{
+ workingDir tomcatHome+'/webapps/testgradle'
+ commandLine '/usr/bin/jar', 'xf',tomcatHome+'/webapps/testgradle/testgradle.war'
+    }
+  }
+}
+
+
+task UATcopyCSCconf(type:Exec){
+doFirst{exec{
+workingDir tomcatHome+'/webapps/testgradle/WEB-INF/classes/'
+}
+}
+    workingDir tomcatHome+'/bin'
+    commandLine './startup.sh'
+}

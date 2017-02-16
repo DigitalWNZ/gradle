@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+<title>Jenkins Test</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- Bootstrap UI -->
+<link rel="stylesheet" href="resources/css/bootstrap.min.css">
+<link rel="stylesheet" href="resources/css/cikonss.css">
+<link href="resources/css/mian.css" rel="stylesheet">
+<!-- AngularJS resources -->
+
+<script src="resources/js/angular.js"></script>
+<script src="resources/js/angular-ui-router.min.js"></script>
+<script src="resources/js/angular-cookies.js"></script>
+<!-- Controller begin -->
+<script src="scripts/app.js"></script>
+<script src="scripts/LoginController.js"></script>
+<!-- Controller end -->
+
+<script src="resources/js/jquery-2.1.3.min.js"></script>
+<script src="resources/js/bootstrap.min.js"></script>
+<script src="resources/js/ng-file-upload-shim.min.js"></script> <!-- for no html5 browsers support -->
+<script src="resources/js/ng-file-upload.min.js"></script>
+<script src="resources/js/loading.js"></script>
+</head>
+<body ng-app="ForJenkin">
+<div ui-view></div>	
+<div id="mask" class="mask" style="text-align: center">
+	<div id="loading" class="loading">
+		<img class="loading2" src="resources/images/loading03.gif">
+	</div>
+</div>		
+</body>
+</html>
