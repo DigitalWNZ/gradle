@@ -21,7 +21,7 @@ public class TextService {
 		JSONObject result=new JSONObject();		
 		TextGen tGen = new TextGen();
 		try {
-			result = tGen.gen_txt("hello world");
+			result = tGen.gen_txt("hello world new");
 			return result.toString();
 		} catch (Exception e) {
 			result.put("ret", 1);
