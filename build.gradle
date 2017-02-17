@@ -54,10 +54,10 @@ dependencies {
     		'org.apache.commons:commons-dbcp2:2.1'   		
 }
 
-def workdir = "/root/.jenkins/workspace/ForJenkin/testgradle/build"
+def workdir = "/root/.jenkins/workspace/ForJenkin/build"
 task buildDockerImage(type:Exec) {
     workingDir workdir + '/libs'
-	commandLine '/usr/bin/jar', 'xf', 'testgrale.war'
+	commandLine 'jar', 'xf', 'testgrale.war'
 
 	doLast { exec {
     	workingDir workdir + '/libs'
