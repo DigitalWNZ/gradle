@@ -57,11 +57,12 @@ dependencies {
 def workdir = "/root/.jenkins/workspace/ForJenkin/build"
 task buildDockerImage(type:Exec) {
     workingDir workdir + '/libs'
-	commandLine 'jar', 'xf', 'testgrale.war'
+    commandLine 'pwd'
+	commandLine 'jar', 'xf', 'testgradle.war'
 
 	doLast { exec {
     	workingDir workdir + '/libs'
-    	commandLine 'rm', '-f', 'testgrale.war'
+    	commandLine 'rm', '-f', 'testgradle.war'
 		} // exec
 	} // doLast	
 
