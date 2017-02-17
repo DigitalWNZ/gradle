@@ -68,7 +68,7 @@ task buildDockerImage(type:Exec) {
 
 	doLast { exec {
     	workingDir workdir
-    	commandLine 'docker', 'build', '-t=testgradle:'+imageTimestamp, '-f', './libs/WEB-INF/classes/Dockerfile' , '.'
+    	commandLine 'docker', 'build', '-t=testgradle', '-f', './libs/WEB-INF/classes/Dockerfile' , '.'
 		} // exec
 	} // doLast	
 
